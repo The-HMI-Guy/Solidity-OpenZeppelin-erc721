@@ -16,6 +16,10 @@ contract TheHMI is ERC721, ERC721Enumerable, Pausable, Ownable {
     uint256 public MINT_PRICE = 0.05 ether;
     uint256 public MAX_SUPPLY = 100;
 
+/*     address[] public WhitelistAddresses = [
+        0x53aE57a6cf0C9Bcb53a8932C97cDaD0a57Ef391d //Manually setting the WL array
+    ]; */
+
     // ******* 2. Lifecycle Methods ******* //
     constructor() ERC721("TheHMI", "TH") {
         // Start token ID at 1. By default it starts at 0.
