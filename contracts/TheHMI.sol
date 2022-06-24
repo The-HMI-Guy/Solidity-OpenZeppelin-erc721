@@ -10,13 +10,20 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
 /**
  * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC721] Non-Fungible Token Standard, including
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
  * {ERC721Enumerable}.
  */
-contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
+contract ERC721 is
+    Context,
+    ERC165,
+    IERC721,
+    IERC721Metadata,
+    IERC721Enumerable
+{
     using Address for address;
     using Strings for uint256;
 
@@ -49,7 +56,13 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC165, IERC165)
+        returns (bool)
+    {
         return
             interfaceId == type(IERC721).interfaceId ||
             interfaceId == type(IERC721Metadata).interfaceId ||
@@ -59,15 +72,30 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-balanceOf}.
      */
-    function balanceOf(address owner) public view virtual override returns (uint256) {
-        require(owner != address(0), "ERC721: address zero is not a valid owner");
+    function balanceOf(address owner)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        require(
+            owner != address(0),
+            "ERC721: address zero is not a valid owner"
+        );
         return _balances[owner];
     }
 
     /**
      * @dev See {IERC721-ownerOf}.
      */
-    function ownerOf(uint256 tokenId) public view virtual override returns (address) {
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
         address owner = _owners[tokenId];
         require(owner != address(0), "ERC721: invalid token ID");
         return owner;
@@ -90,11 +118,20 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
         _requireMinted(tokenId);
 
         string memory baseURI = _baseURI();
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+        return
+            bytes(baseURI).length > 0
+                ? string(abi.encodePacked(baseURI, tokenId.toString()))
+                : "";
     }
 
     /**
@@ -124,7 +161,13 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-getApproved}.
      */
-    function getApproved(uint256 tokenId) public view virtual override returns (address) {
+    function getApproved(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
         _requireMinted(tokenId);
 
         return _tokenApprovals[tokenId];
@@ -133,14 +176,24 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-setApprovalForAll}.
      */
-    function setApprovalForAll(address operator, bool approved) public virtual override {
+    function setApprovalForAll(address operator, bool approved)
+        public
+        virtual
+        override
+    {
         _setApprovalForAll(_msgSender(), operator, approved);
     }
 
     /**
      * @dev See {IERC721-isApprovedForAll}.
      */
-    function isApprovedForAll(address owner, address operator) public view virtual override returns (bool) {
+    function isApprovedForAll(address owner, address operator)
+        public
+        view
+        virtual
+        override
+        returns (bool)
+    {
         return _operatorApprovals[owner][operator];
     }
 
@@ -153,7 +206,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         uint256 tokenId
     ) public virtual override {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner nor approved");
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner nor approved"
+        );
 
         _transfer(from, to, tokenId);
     }
@@ -178,7 +234,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         uint256 tokenId,
         bytes memory data
     ) public virtual override {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner nor approved");
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "ERC721: caller is not token owner nor approved"
+        );
         _safeTransfer(from, to, tokenId, data);
     }
 
@@ -207,7 +266,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         bytes memory data
     ) internal virtual {
         _transfer(from, to, tokenId);
-        require(_checkOnERC721Received(from, to, tokenId, data), "ERC721: transfer to non ERC721Receiver implementer");
+        require(
+            _checkOnERC721Received(from, to, tokenId, data),
+            "ERC721: transfer to non ERC721Receiver implementer"
+        );
     }
 
     /**
@@ -229,9 +291,16 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
      *
      * - `tokenId` must exist.
      */
-    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
+    function _isApprovedOrOwner(address spender, uint256 tokenId)
+        internal
+        view
+        virtual
+        returns (bool)
+    {
         address owner = ERC721.ownerOf(tokenId);
-        return (spender == owner || isApprovedForAll(owner, spender) || getApproved(tokenId) == spender);
+        return (spender == owner ||
+            isApprovedForAll(owner, spender) ||
+            getApproved(tokenId) == spender);
     }
 
     /**
@@ -332,7 +401,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         address to,
         uint256 tokenId
     ) internal virtual {
-        require(ERC721.ownerOf(tokenId) == from, "ERC721: transfer from incorrect owner");
+        require(
+            ERC721.ownerOf(tokenId) == from,
+            "ERC721: transfer from incorrect owner"
+        );
         require(to != address(0), "ERC721: transfer to the zero address");
 
         _beforeTokenTransfer(from, to, tokenId);
@@ -398,11 +470,20 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         bytes memory data
     ) private returns (bool) {
         if (to.isContract()) {
-            try IERC721Receiver(to).onERC721Received(_msgSender(), from, tokenId, data) returns (bytes4 retval) {
+            try
+                IERC721Receiver(to).onERC721Received(
+                    _msgSender(),
+                    from,
+                    tokenId,
+                    data
+                )
+            returns (bytes4 retval) {
                 return retval == IERC721Receiver.onERC721Received.selector;
             } catch (bytes memory reason) {
                 if (reason.length == 0) {
-                    revert("ERC721: transfer to non ERC721Receiver implementer");
+                    revert(
+                        "ERC721: transfer to non ERC721Receiver implementer"
+                    );
                 } else {
                     /// @solidity memory-safe-assembly
                     assembly {
@@ -456,7 +537,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts//utils/Context.sol";
+//import "@openzeppelin/contracts//utils/Context.sol";
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -473,7 +554,10 @@ import "@openzeppelin/contracts//utils/Context.sol";
 abstract contract Ownable is Context {
     address private _owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
@@ -520,7 +604,10 @@ abstract contract Ownable is Context {
      * Can only be called by the current owner.
      */
     function transferOwnership(address newOwner) public virtual onlyOwner {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        require(
+            newOwner != address(0),
+            "Ownable: new owner is the zero address"
+        );
         _transferOwnership(newOwner);
     }
 
@@ -534,3 +621,196 @@ abstract contract Ownable is Context {
         emit OwnershipTransferred(oldOwner, newOwner);
     }
 }
+
+pragma solidity ^0.8.0;
+
+/**
+ * @dev Contract module which allows children to implement an emergency stop
+ * mechanism that can be triggered by an authorized account.
+ *
+ * This module is used through inheritance. It will make available the
+ * modifiers `whenNotPaused` and `whenPaused`, which can be applied to
+ * the functions of your contract. Note that they will not be pausable by
+ * simply including this module, only once the modifiers are put in place.
+ */
+abstract contract Pausable is Context {
+    /**
+     * @dev Emitted when the pause is triggered by `account`.
+     */
+    event Paused(address account);
+
+    /**
+     * @dev Emitted when the pause is lifted by `account`.
+     */
+    event Unpaused(address account);
+
+    bool private _paused;
+
+    /**
+     * @dev Initializes the contract in unpaused state.
+     */
+    constructor() {
+        _paused = false;
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the contract is not paused.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    modifier whenNotPaused() {
+        _requireNotPaused();
+        _;
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the contract is paused.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    modifier whenPaused() {
+        _requirePaused();
+        _;
+    }
+
+    /**
+     * @dev Returns true if the contract is paused, and false otherwise.
+     */
+    function paused() public view virtual returns (bool) {
+        return _paused;
+    }
+
+    /**
+     * @dev Throws if the contract is paused.
+     */
+    function _requireNotPaused() internal view virtual {
+        require(!paused(), "Pausable: paused");
+    }
+
+    /**
+     * @dev Throws if the contract is not paused.
+     */
+    function _requirePaused() internal view virtual {
+        require(paused(), "Pausable: not paused");
+    }
+
+    /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    function _pause() internal virtual whenNotPaused {
+        _paused = true;
+        emit Paused(_msgSender());
+    }
+
+    /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function _unpause() internal virtual whenPaused {
+        _paused = false;
+        emit Unpaused(_msgSender());
+    }
+}
+
+pragma solidity ^0.8.0;
+
+contract TheHMI is ERC721, IERC721Enumerable, Pausable, Ownable {
+    // ******* 1. Property Variables ******* //
+    using Counters for Counters.Counter;
+
+    Counters.Counter private _tokenIdCounter;
+
+    uint256 public MINT_PRICE = 0.05 ether;
+    uint256 public MAX_SUPPLY = 100;
+
+    // ******* 2. Lifecycle Methods ******* //
+    constructor() ERC721("TheHMI", "TH") {
+        // Start token ID at 1. By default it starts at 0.
+        _tokenIdCounter.increment();
+    }
+
+    function withdraw() public onlyOwner {
+        require(address(this).balance > 0, "Balance is zero.");
+        payable(owner()).transfer(address(this).balance);
+    }
+
+    // ******* 3. Pauseable Functions ******* //
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
+    // ******* 4. Minting Functions ******* //
+
+    function safeMint(address to) public payable {
+        // X check that totalSupply is less than MAX_SUPPLY
+        require(totalSupply() < MAX_SUPPLY, "Can't mint anymore tokens.");
+
+        // X check if ether value is correct
+        require(msg.value >= MINT_PRICE, "Not enough ether sent.");
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, tokenId);
+    }
+
+    // ******* 5. Other Functions ******* //
+
+    function _baseURI() internal pure override returns (string memory) {
+        return "ipfs://QmWBPophECw4QxtNkFZGXzevGVRKQ5LZXTnpyTXTnqXFRg/";
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    // The following functions are overrides required by Solidity.
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+}
+
+/* NOTES:
+    contract address: 0xd9145CCE52D386f254917e481eB44e9943F39138
+    
+    // Users
+
+    owner: 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+        - deployed contract
+        - can only call the 'onlyOwner' modifier functions
+
+    address 2: 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
+        - mint 1 NFT
+    
+    address 3: 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
+        - address 2 will transfer NFT #1 to address 3 (recipient)
+
+
+
+
+
+*/
