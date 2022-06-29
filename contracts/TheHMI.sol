@@ -11,21 +11,13 @@ import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
 /**
  * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC721] Non-Fungible Token Standard, including
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
  * {ERC721Enumerable}.
  */
-contract ERC721 is
-    Context,
-    ERC165,
-    IERC721,
-    IERC721Metadata,
-    IERC721Enumerable
-    
-{
+contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     using Address for address;
     using Strings for uint256;
 
@@ -730,7 +722,6 @@ pragma solidity ^0.8.0;
 contract TheHMI is ERC721, Pausable, Ownable {
     // ******* 1. Property Variables ******* //
     using Counters for Counters.Counter;
-    
 
     Counters.Counter private _tokenIdCounter;
 
@@ -762,7 +753,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     function safeMint(address to) public payable {
         // X check that totalSupply is less than MAX_SUPPLY
-        require(totalSupply() < MAX_SUPPLY, "Can't mint anymore tokens.");
+        //require(totalSupply() < MAX_SUPPLY, "Can't mint anymore tokens.");
 
         // X check if ether value is correct
         require(msg.value >= MINT_PRICE, "Not enough ether sent.");
@@ -777,24 +768,24 @@ contract TheHMI is ERC721, Pausable, Ownable {
         return "ipfs://QmWBPophECw4QxtNkFZGXzevGVRKQ5LZXTnpyTXTnqXFRg/";
     }
 
-    function _beforeTokenTransfer(
+    /*     function _beforeTokenTransfer(
         address from,
         address to,
         uint256 tokenId
     ) internal override(ERC721, IERC721Enumerable) whenNotPaused {
         super._beforeTokenTransfer(from, to, tokenId);
-    }
+    } */
 
     // The following functions are overrides required by Solidity.
 
-    function supportsInterface(bytes4 interfaceId)
+    /*     function supportsInterface(bytes4 interfaceId)
         public
         view
         override(ERC721, IERC721Enumerable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
-    }
+    } */
 }
 
 /* NOTES:
