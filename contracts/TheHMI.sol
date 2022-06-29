@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
@@ -23,6 +24,7 @@ contract ERC721 is
     IERC721,
     IERC721Metadata,
     IERC721Enumerable
+    
 {
     using Address for address;
     using Strings for uint256;
@@ -725,9 +727,10 @@ abstract contract Pausable is Context {
 
 pragma solidity ^0.8.0;
 
-contract TheHMI is ERC721, IERC721Enumerable, Pausable, Ownable {
+contract TheHMI is ERC721, Pausable, Ownable {
     // ******* 1. Property Variables ******* //
     using Counters for Counters.Counter;
+    
 
     Counters.Counter private _tokenIdCounter;
 
@@ -778,7 +781,7 @@ contract TheHMI is ERC721, IERC721Enumerable, Pausable, Ownable {
         address from,
         address to,
         uint256 tokenId
-    ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
+    ) internal override(ERC721, IERC721Enumerable) whenNotPaused {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
@@ -787,7 +790,7 @@ contract TheHMI is ERC721, IERC721Enumerable, Pausable, Ownable {
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable)
+        override(ERC721, IERC721Enumerable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
