@@ -527,11 +527,8 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         uint256 tokenId
     ) internal virtual {}
 }
-// OpenZeppelin Contracts v4.4.1 (access/Ownable.sol)
 
 pragma solidity ^0.8.0;
-
-//import "@openzeppelin/contracts//utils/Context.sol";
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
