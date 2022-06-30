@@ -722,7 +722,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     Counters.Counter private _tokenIdCounter;
 
-    uint256 public MINT_PRICE = 0.05 ether;
+    uint256 public MINT_PRICE = 0.005 ether;
     uint256 public MAX_SUPPLY = 100;
 
     // ******* 2. Lifecycle Methods ******* //
