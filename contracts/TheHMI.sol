@@ -638,10 +638,10 @@ abstract contract Pausable is Context {
     bool private _paused;
 
     /**
-     * @dev Initializes the contract in unpaused state.
+     * @dev Initializes the contract in paused state.
      */
     constructor() {
-        _paused = false;
+        _paused = true;
     }
 
     /**
@@ -719,11 +719,18 @@ pragma solidity ^0.8.0;
 contract TheHMI is ERC721, Pausable, Ownable {
     // ******* 1. Property Variables ******* //
     using Counters for Counters.Counter;
+    using Strings for uint256;
 
     Counters.Counter private _tokenIdCounter;
 
-    uint256 public MINT_PRICE = 0.005 ether;
-    uint256 public MAX_SUPPLY = 100;
+    uint256 public mintPrice = 0.005 ether;
+    uint256 public whitelistPrice = 0.001 ether;
+
+    uint256 public maxSupply = 100;
+    uint256 public maxMintAmount = 5;
+    uint256 public whitelistMintAmount = 2;
+
+    uint256 public amountMinted;
 
     // ******* 2. Lifecycle Methods ******* //
     constructor() ERC721("TheHMI", "TH") {
@@ -750,13 +757,17 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     function safeMint(address to) public payable {
         // X check that totalSupply is less than MAX_SUPPLY
-        //require(totalSupply() < MAX_SUPPLY, "Can't mint anymore tokens.");
+        require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
 
         // X check if ether value is correct
-        require(msg.value >= MINT_PRICE, "Not enough ether sent.");
+        require(msg.value >= mintPrice, "Not enough ether sent.");
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
+    }
+
+    function totalSupply() public view returns (uint256) {
+        return amountMinted;
     }
 
     // ******* 5. Other Functions ******* //
@@ -764,25 +775,6 @@ contract TheHMI is ERC721, Pausable, Ownable {
     function _baseURI() internal pure override returns (string memory) {
         return "ipfs://QmWBPophECw4QxtNkFZGXzevGVRKQ5LZXTnpyTXTnqXFRg/";
     }
-
-    /*     function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal override(ERC721, IERC721Enumerable) whenNotPaused {
-        super._beforeTokenTransfer(from, to, tokenId);
-    } */
-
-    // The following functions are overrides required by Solidity.
-
-    /*     function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, IERC721Enumerable)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    } */
 }
 
 /* NOTES:
