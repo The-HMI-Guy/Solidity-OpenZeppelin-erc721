@@ -758,7 +758,8 @@ contract TheHMI is ERC721, Pausable, Ownable {
     // ******* 4. Minting Functions ******* //
 
     function safeMint(uint256 _mintAmount) public payable {
-        uint256 mintSupply = totalSupply();
+        //uint256 mintSupply = totalSupply(); // Is this needed? Maybe use tokdenID
+        uint256 tokenId = _tokenIdCounter.current();
 
         // X check that totalSupply is less than MAX_SUPPLY
         require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
@@ -767,14 +768,27 @@ contract TheHMI is ERC721, Pausable, Ownable {
         // X check if the mint amount is greater than 0
         require(_mintAmount > 0, "Mint amount must be greater than 0");
         // X check if the mint amount is less than the max mint amount
-        require(_mintAmount <= maxMintAmount, "Mint amount greater than max mint amount");
+        require(
+            _mintAmount <= maxMintAmount,
+            "Mint amount greater than max mint amount"
+        );
         // X check if the mint amount + mint supply is greater than the max supply
-        require(_mintAmount + mintSupply <= maxSupply, "Mint amount greater than the remaining supply");
-        uint256 tokenId = _tokenIdCounter.current();
-
+        require(
+            _mintAmount + tokenId <= maxSupply,
+            "Mint amount greater than the remaining supply"
+        );
         _tokenIdCounter.increment();
-        mintSupply = totalSupply();
+        // mintSupply = totalSupply();
+
         _safeMint(msg.sender, tokenId);
+
+        if (msg.sender != owner()) {
+            require(msg.value >= mintPrice * _mintAmount);
+        }
+
+        for (uint256 i = 1; i <= _mintAmount; i++) {
+            _safeMint(msg.sender, tokenId);
+        }
     }
 
     function totalSupply() public view returns (uint256) {
