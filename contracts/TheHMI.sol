@@ -757,17 +757,24 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     // ******* 4. Minting Functions ******* //
 
-    function safeMint(address to) public payable {
+    function safeMint(uint256 _mintAmount) public payable {
         uint256 mintSupply = totalSupply();
 
         // X check that totalSupply is less than MAX_SUPPLY
         require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
         // X check if ether value is correct
         require(msg.value >= mintPrice, "Not enough ether sent.");
+        // X check if the mint amount is greater than 0
+        require(_mintAmount > 0, "Mint amount must be greater than 0");
+        // X check if the mint amount is less than the max mint amount
+        require(_mintAmount <= maxMintAmount, "Mint amount greater than max mint amount");
+        // X check if the mint amount + mint supply is greater than the max supply
+        require(_mintAmount + mintSupply <= maxSupply, "Mint amount greater than the remaining supply");
         uint256 tokenId = _tokenIdCounter.current();
+
         _tokenIdCounter.increment();
         mintSupply = totalSupply();
-        _safeMint(to, tokenId);
+        _safeMint(msg.sender, tokenId);
     }
 
     function totalSupply() public view returns (uint256) {
