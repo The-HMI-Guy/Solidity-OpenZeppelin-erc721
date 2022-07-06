@@ -723,8 +723,8 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     Counters.Counter private _tokenIdCounter;
 
-    uint256 public mintPrice = 0.005 ether;
-    uint256 public whitelistPrice = 0.001 ether;
+    uint256 public mintPrice = 1.5 ether;
+    uint256 public whitelistPrice = 1 ether;
 
     uint256 public maxSupply = 100;
     uint256 public maxMintAmount = 5;
@@ -758,13 +758,15 @@ contract TheHMI is ERC721, Pausable, Ownable {
     // ******* 4. Minting Functions ******* //
 
     function safeMint(address to) public payable {
+        uint256 mintSupply = totalSupply();
+
         // X check that totalSupply is less than MAX_SUPPLY
         require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
-
         // X check if ether value is correct
         require(msg.value >= mintPrice, "Not enough ether sent.");
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
+        mintSupply = totalSupply();
         _safeMint(to, tokenId);
     }
 
