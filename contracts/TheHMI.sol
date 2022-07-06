@@ -731,9 +731,11 @@ contract TheHMI is ERC721, Pausable, Ownable {
     uint256 public whitelistMintAmount = 2;
 
     uint256 public amountMinted;
+    string public notRevealedURI;
 
     // ******* 2. Lifecycle Methods ******* //
-    constructor() ERC721("TheHMI", "TH") {
+    constructor(string memory _unrevealedURI) ERC721("TheHMI", "TH") {
+        setNotRevealedURI(_unrevealedURI);
         // Start token ID at 1. By default it starts at 0.
         _tokenIdCounter.increment();
     }
@@ -774,6 +776,10 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     function _baseURI() internal pure override returns (string memory) {
         return "ipfs://QmWBPophECw4QxtNkFZGXzevGVRKQ5LZXTnpyTXTnqXFRg/";
+    }
+
+    function setNotRevealedURI(string memory _notRevealedURI) public onlyOwner {
+        notRevealedURI = _notRevealedURI;
     }
 }
 
