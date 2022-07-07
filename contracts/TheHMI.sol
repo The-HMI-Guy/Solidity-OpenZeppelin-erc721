@@ -733,6 +733,12 @@ contract TheHMI is ERC721, Pausable, Ownable {
     uint256 public amountMinted;
     string public notRevealedURI;
 
+    bool public revealed = false;
+    bool public whitelistActive = false;
+
+    mapping(address => uint256) private _whiteList;
+    uint256 public addressCount;
+
     // ******* 2. Lifecycle Methods ******* //
     constructor(string memory _unrevealedURI) ERC721("TheHMI", "TH") {
         setNotRevealedURI(_unrevealedURI);
@@ -761,6 +767,15 @@ contract TheHMI is ERC721, Pausable, Ownable {
         //uint256 mintSupply = totalSupply(); // Is this needed? Maybe use tokdenID
         uint256 tokenId = _tokenIdCounter.current();
 
+
+        if (_whiteList[msg.sender] > 0) {
+            // X check that the whitelist is active
+            require(whitelistActive, "Whitelist not active");
+            // X check that mint amount is less than the account's purchase amount
+            require(_mintAmount <= _whiteList[msg.sender], "Mint amount greater than available purchase amount");
+            // X check that mint amount is less than the max whitelist amount
+            require(_mintAmount <= whitelistMintAmount, "Mint amount greater than whitelist amount");
+        }
         // X check that totalSupply is less than MAX_SUPPLY
         require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
         // X check if ether value is correct
