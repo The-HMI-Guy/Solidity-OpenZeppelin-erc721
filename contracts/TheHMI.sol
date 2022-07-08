@@ -789,6 +789,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
                 amountMinted += _mintAmount;
             }
         } else {
+            mintSupply = totalSupply();
             // X check that the contract is not paused
             require(!_paused, "Contract is paused");
             // X check that totalSupply is less than MAX_SUPPLY
@@ -807,7 +808,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
                 _mintAmount + mintSupply <= maxSupply,
                 "Mint amount greater than the remaining supply"
             );
-            _tokenIdCounter.increment();
+            //_tokenIdCounter.increment();
             // mintSupply = totalSupply();
 
             //_safeMint(msg.sender, tokenId);
