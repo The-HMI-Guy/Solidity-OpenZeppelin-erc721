@@ -767,42 +767,57 @@ contract TheHMI is ERC721, Pausable, Ownable {
         //uint256 mintSupply = totalSupply(); // Is this needed? Maybe use tokdenID
         uint256 tokenId = _tokenIdCounter.current();
 
-
         if (_whiteList[msg.sender] > 0) {
             // X check that the whitelist is active
             require(whitelistActive, "Whitelist not active");
             // X check that mint amount is less than the account's purchase amount
-            require(_mintAmount <= _whiteList[msg.sender], "Mint amount greater than available purchase amount");
+            require(
+                _mintAmount <= _whiteList[msg.sender],
+                "Mint amount greater than available purchase amount"
+            );
             // X check that mint amount is less than the max whitelist amount
-            require(_mintAmount <= whitelistMintAmount, "Mint amount greater than whitelist amount");
-        }
-        // X check that totalSupply is less than MAX_SUPPLY
-        require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
-        // X check if ether value is correct
-        require(msg.value >= mintPrice, "Not enough ether sent.");
-        // X check if the mint amount is greater than 0
-        require(_mintAmount > 0, "Mint amount must be greater than 0");
-        // X check if the mint amount is less than the max mint amount
-        require(
-            _mintAmount <= maxMintAmount,
-            "Mint amount greater than max mint amount"
-        );
-        // X check if the mint amount + mint supply is greater than the max supply
-        require(
-            _mintAmount + tokenId <= maxSupply,
-            "Mint amount greater than the remaining supply"
-        );
-        _tokenIdCounter.increment();
-        // mintSupply = totalSupply();
+            require(
+                _mintAmount <= whitelistMintAmount,
+                "Mint amount greater than whitelist amount"
+            );
 
-        _safeMint(msg.sender, tokenId);
+            _whiteList[msg.sender] -= _mintAmount;
+            for (uint256 i = 1; i <= _mintAmount; i++) {
+                _safeMint(msg.sender, tokenId);
+            }
+            if (_whiteList[msg.sender] == 0) {
+                amountMinted += _mintAmount;
+            }
+        } else {
 
-        if (msg.sender != owner()) {
-            require(msg.value >= mintPrice * _mintAmount);
-        }
+            // X check that totalSupply is less than MAX_SUPPLY
+            require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
+            // X check if ether value is correct
+            require(msg.value >= mintPrice, "Not enough ether sent.");
+            // X check if the mint amount is greater than 0
+            require(_mintAmount > 0, "Mint amount must be greater than 0");
+            // X check if the mint amount is less than the max mint amount
+            require(
+                _mintAmount <= maxMintAmount,
+                "Mint amount greater than max mint amount"
+            );
+            // X check if the mint amount + mint supply is greater than the max supply
+            require(
+                _mintAmount + tokenId <= maxSupply,
+                "Mint amount greater than the remaining supply"
+            );
+            _tokenIdCounter.increment();
+            // mintSupply = totalSupply();
 
-        for (uint256 i = 1; i <= _mintAmount; i++) {
             _safeMint(msg.sender, tokenId);
+
+            if (msg.sender != owner()) {
+                require(msg.value >= mintPrice * _mintAmount);
+            }
+
+            for (uint256 i = 1; i <= _mintAmount; i++) {
+                _safeMint(msg.sender, tokenId);
+            }
         }
     }
 
@@ -819,25 +834,23 @@ contract TheHMI is ERC721, Pausable, Ownable {
     function setNotRevealedURI(string memory _notRevealedURI) public onlyOwner {
         notRevealedURI = _notRevealedURI;
     }
+
+    //white list fuctions
+    //set single address
+    function setwhiteList(address addressInput, uint256 numAllowedToMint)
+        external
+        onlyOwner
+    {
+        _whiteList[addressInput] = numAllowedToMint;
+        addressCount += 1;
+    }
+
+    //set white list to true or false for active
+    function setwhiteListActive(bool _whiteListActive) external onlyOwner {
+        whitelistActive = _whiteListActive;
+    }
 }
 
 /* NOTES:
-    contract address: 0xd9145CCE52D386f254917e481eB44e9943F39138
     
-    // Users
-
-    owner: 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
-        - deployed contract
-        - can only call the 'onlyOwner' modifier functions
-
-    address 2: 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
-        - mint 1 NFT
-    
-    address 3: 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
-        - address 2 will transfer NFT #1 to address 3 (recipient)
-
-
-
-
-
 */
