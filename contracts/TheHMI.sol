@@ -635,7 +635,7 @@ abstract contract Pausable is Context {
      */
     event Unpaused(address account);
 
-    bool private _paused;
+    bool public _paused; //changed to public so the contract could use it
 
     /**
      * @dev Initializes the contract in paused state.
@@ -764,8 +764,8 @@ contract TheHMI is ERC721, Pausable, Ownable {
     // ******* 4. Minting Functions ******* //
 
     function safeMint(uint256 _mintAmount) public payable {
-        //uint256 mintSupply = totalSupply(); // Is this needed? Maybe use tokdenID
-        uint256 tokenId = _tokenIdCounter.current();
+        uint256 mintSupply = totalSupply(); // Is this needed? Maybe use tokdenID
+        //uint256 tokenId = _tokenIdCounter.current();
 
         if (_whiteList[msg.sender] > 0) {
             // X check that the whitelist is active
@@ -783,13 +783,14 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
             _whiteList[msg.sender] -= _mintAmount;
             for (uint256 i = 1; i <= _mintAmount; i++) {
-                _safeMint(msg.sender, tokenId);
+                _safeMint(msg.sender, mintSupply + i);
             }
             if (_whiteList[msg.sender] == 0) {
                 amountMinted += _mintAmount;
             }
         } else {
-
+            // X check that the contract is not paused
+            require(!_paused, "Contract is paused");
             // X check that totalSupply is less than MAX_SUPPLY
             require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
             // X check if ether value is correct
@@ -803,20 +804,20 @@ contract TheHMI is ERC721, Pausable, Ownable {
             );
             // X check if the mint amount + mint supply is greater than the max supply
             require(
-                _mintAmount + tokenId <= maxSupply,
+                _mintAmount + mintSupply <= maxSupply,
                 "Mint amount greater than the remaining supply"
             );
             _tokenIdCounter.increment();
             // mintSupply = totalSupply();
 
-            _safeMint(msg.sender, tokenId);
+            //_safeMint(msg.sender, tokenId);
 
             if (msg.sender != owner()) {
                 require(msg.value >= mintPrice * _mintAmount);
             }
 
             for (uint256 i = 1; i <= _mintAmount; i++) {
-                _safeMint(msg.sender, tokenId);
+                _safeMint(msg.sender, mintSupply + i);
             }
         }
     }
