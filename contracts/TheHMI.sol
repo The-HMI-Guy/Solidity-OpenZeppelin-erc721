@@ -767,7 +767,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
     // ******* 4. Minting Functions ******* //
 
     function safeMint(uint256 _mintAmount) public payable {
-        uint256 mintSupply = totalSupply(); // Is this needed? Maybe use tokdenID
+        uint256 mintSupply = totalSupply();
         //uint256 tokenId = _tokenIdCounter.current();
 
         if (_whiteList[msg.sender] > 0) {
@@ -785,8 +785,8 @@ contract TheHMI is ERC721, Pausable, Ownable {
             );
             // X check that account has not minted the max whitelist amount
             require(
-                (whitelistClaimed[msg.sender] + _mintAmount) <= 2,
-                "You have already claimed 2 NFTs!"
+                (whitelistClaimed[msg.sender] + _mintAmount) <= whitelistLimit,
+                "You have already claimed whitelist limit!"
             );
 
             uint256 ownerTokenCount = balanceOf(msg.sender);
@@ -866,5 +866,5 @@ contract TheHMI is ERC721, Pausable, Ownable {
 }
 
 /* NOTES:
-    
+    Issues: ERC721 Token ID Already Exist
 */
