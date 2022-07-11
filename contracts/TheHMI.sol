@@ -789,8 +789,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
                 "You have already claimed whitelist limit!"
             );
 
-            uint256 ownerTokenCount = balanceOf(msg.sender);
-            require(ownerTokenCount < whitelistLimit);
+            //require(balanceOf(msg.sender) < whitelistLimit, "");
             _whiteList[msg.sender] -= _mintAmount;
 
             for (uint256 i = 1; i <= _mintAmount; i++) {
@@ -832,6 +831,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
             for (uint256 i = 1; i <= _mintAmount; i++) {
                 _safeMint(msg.sender, mintSupply + i);
             }
+            amountMinted += _mintAmount;
         }
     }
 
