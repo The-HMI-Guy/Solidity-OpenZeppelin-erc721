@@ -729,6 +729,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
     uint256 public maxSupply = 100;
     uint256 public maxMintAmount = 5;
     uint256 public whitelistMintAmount = 2;
+    uint256 public whitelistLimit = 3;
 
     uint256 public amountMinted;
     string public notRevealedURI;
@@ -738,6 +739,8 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     mapping(address => uint256) private _whiteList;
     uint256 public addressCount;
+
+    mapping(address => uint256) public whitelistClaimed;
 
     // ******* 2. Lifecycle Methods ******* //
     constructor(string memory _unrevealedURI) ERC721("TheHMI", "TH") {
@@ -780,14 +783,23 @@ contract TheHMI is ERC721, Pausable, Ownable {
                 _mintAmount <= whitelistMintAmount,
                 "Mint amount greater than whitelist amount"
             );
+            // X check that account has not minted the max whitelist amount
+            require(
+                (whitelistClaimed[msg.sender] + _mintAmount) <= 2,
+                "You have already claimed 2 NFTs!"
+            );
 
+            uint256 ownerTokenCount = balanceOf(msg.sender);
+            require(ownerTokenCount < whitelistLimit);
             _whiteList[msg.sender] -= _mintAmount;
+
             for (uint256 i = 1; i <= _mintAmount; i++) {
                 _safeMint(msg.sender, mintSupply + i);
             }
             if (_whiteList[msg.sender] == 0) {
                 amountMinted += _mintAmount;
             }
+            whitelistClaimed[msg.sender] += _mintAmount;
         } else {
             mintSupply = totalSupply();
             // X check that the contract is not paused
