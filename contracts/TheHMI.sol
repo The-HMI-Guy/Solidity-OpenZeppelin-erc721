@@ -723,20 +723,23 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     Counters.Counter private _tokenIdCounter;
 
-    uint256 public mintPrice = 1.5 ether;
-    uint256 public whitelistPrice = 1 ether;
-
+    /// @dev Main variables for the NFT collection
+    string public notRevealedURI;
+    
     uint256 public maxSupply = 100;
     uint256 public maxMintAmount = 5;
+    uint256 public mintPrice = 1.5 ether;
+    uint256 public amountMinted;
+
+    /// @dev Whitelist variables for the NFT collection
+    uint256 public whitelistPrice = 1 ether;
     uint256 public whitelistMintAmount = 2;
     uint256 public whitelistLimit = 3;
-
-    uint256 public amountMinted;
-    string public notRevealedURI;
-
-    bool public revealed = false;
     bool public whitelistActive = false;
 
+    bool public revealed = false;
+
+    /// @dev Whitelist address mapping and count
     mapping(address => uint256) private _whiteList;
     uint256 public addressCount;
 
@@ -768,7 +771,6 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     function safeMint(uint256 _mintAmount) public payable {
         uint256 mintSupply = totalSupply();
-        //uint256 tokenId = _tokenIdCounter.current();
 
         if (_whiteList[msg.sender] > 0) {
             // X check that the whitelist is active
@@ -849,9 +851,8 @@ contract TheHMI is ERC721, Pausable, Ownable {
         notRevealedURI = _notRevealedURI;
     }
 
-    //white list fuctions
-    //set single address
-    function setwhiteList(address addressInput, uint256 numAllowedToMint)
+    /// @dev Set a single account to be whitelisted and the number of mints allowed
+    function setWhitelist(address addressInput, uint256 numAllowedToMint)
         external
         onlyOwner
     {
