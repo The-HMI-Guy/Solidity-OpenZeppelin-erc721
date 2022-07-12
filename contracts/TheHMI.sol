@@ -797,8 +797,9 @@ contract TheHMI is ERC721, Pausable, Ownable {
             _whitelist[msg.sender] -= _mintAmount;
 
             for (uint256 i = 1; i <= _mintAmount; i++) {
+                console.log(i);
                 _safeMint(msg.sender, mintSupply + i);
-                console.log();
+                console.log(mintSupply);
             }
             if (_whitelist[msg.sender] == 0) {
                 amountMinted += _mintAmount;
@@ -824,10 +825,6 @@ contract TheHMI is ERC721, Pausable, Ownable {
                 _mintAmount + mintSupply <= maxSupply,
                 "Mint amount greater than the remaining supply"
             );
-            //_tokenIdCounter.increment();
-            // mintSupply = totalSupply();
-
-            //_safeMint(msg.sender, tokenId);
 
             if (msg.sender != owner()) {
                 require(msg.value >= mintPrice * _mintAmount);
