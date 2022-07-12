@@ -735,7 +735,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
     uint256 public whitelistPrice = 1 ether;
     uint256 public whitelistMintAmount = 2;
     uint256 public whitelistLimit = 3;
-    bool public whitelistActive = false;
+    bool public whitelistEnabled = false;
 
     bool public revealed = false;
 
@@ -773,8 +773,8 @@ contract TheHMI is ERC721, Pausable, Ownable {
         uint256 mintSupply = totalSupply();
 
         if (_whiteList[msg.sender] > 0) {
-            // X check that the whitelist is active
-            require(whitelistActive, "Whitelist not active");
+            // X check that the whitelist is enabled
+            require(whitelistEnabled, "Whitelist not enabled");
             // X check that mint amount is less than the account's purchase amount
             require(
                 _mintAmount <= _whiteList[msg.sender],
@@ -852,17 +852,17 @@ contract TheHMI is ERC721, Pausable, Ownable {
     }
 
     /// @dev Set a single account to be whitelisted and the number of mints allowed
-    function setWhitelist(address addressInput, uint256 numAllowedToMint)
+    function setWhitelist(address _address, uint256 _mintAmount)
         external
         onlyOwner
     {
-        _whiteList[addressInput] = numAllowedToMint;
+        _whiteList[_address] = _mintAmount;
         addressCount += 1;
     }
 
-    //set white list to true or false for active
-    function setwhiteListActive(bool _whiteListActive) external onlyOwner {
-        whitelistActive = _whiteListActive;
+    /// @dev Enable/disable the whitelist feature
+    function setWhitelistEnabled(bool _whitelistEnabled) external onlyOwner {
+        whitelistEnabled = _whitelistEnabled;
     }
 }
 
