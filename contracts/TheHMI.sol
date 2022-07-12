@@ -12,6 +12,8 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC721] Non-Fungible Token Standard, including
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
@@ -740,7 +742,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
     bool public revealed = false;
 
     /// @dev Whitelist address mapping and count
-    mapping(address => uint256) private _whiteList;
+    mapping(address => uint256) private _whitelist;
     uint256 public addressCount;
 
     mapping(address => uint256) public whitelistClaimed;
@@ -772,12 +774,13 @@ contract TheHMI is ERC721, Pausable, Ownable {
     function safeMint(uint256 _mintAmount) public payable {
         uint256 mintSupply = totalSupply();
 
-        if (_whiteList[msg.sender] > 0) {
+        /// @dev Check if the address that called the function is on the whitelist
+        if (_whitelist[msg.sender] > 0) {
             // X check that the whitelist is enabled
             require(whitelistEnabled, "Whitelist not enabled");
             // X check that mint amount is less than the account's purchase amount
             require(
-                _mintAmount <= _whiteList[msg.sender],
+                _mintAmount <= _whitelist[msg.sender],
                 "Mint amount greater than available purchase amount"
             );
             // X check that mint amount is less than the max whitelist amount
@@ -791,13 +794,13 @@ contract TheHMI is ERC721, Pausable, Ownable {
                 "You have already claimed whitelist limit!"
             );
 
-            //require(balanceOf(msg.sender) < whitelistLimit, "");
-            _whiteList[msg.sender] -= _mintAmount;
+            _whitelist[msg.sender] -= _mintAmount;
 
             for (uint256 i = 1; i <= _mintAmount; i++) {
                 _safeMint(msg.sender, mintSupply + i);
+                console.log();
             }
-            if (_whiteList[msg.sender] == 0) {
+            if (_whitelist[msg.sender] == 0) {
                 amountMinted += _mintAmount;
             }
             whitelistClaimed[msg.sender] += _mintAmount;
@@ -856,7 +859,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
         external
         onlyOwner
     {
-        _whiteList[_address] = _mintAmount;
+        _whitelist[_address] = _mintAmount;
         addressCount += 1;
     }
 
