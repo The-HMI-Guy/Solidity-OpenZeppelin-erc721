@@ -380,7 +380,6 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
 
         _afterTokenTransfer(owner, address(0), tokenId);
     }
-
     /**
      * @dev Transfers `tokenId` from `from` to `to`.
      *  As opposed to {transferFrom}, this imposes no restrictions on msg.sender.
