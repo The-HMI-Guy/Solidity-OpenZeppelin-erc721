@@ -864,5 +864,5 @@ contract TheHMI is ERC721, Pausable, Ownable {
 }
 
 /* NOTES:
-    Issues: ERC721 Token ID Already Exist
+    Issues: None
 */
