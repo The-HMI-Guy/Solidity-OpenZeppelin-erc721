@@ -799,9 +799,9 @@ contract TheHMI is ERC721, Pausable, Ownable {
                 _safeMint(msg.sender, mintSupply + i);
             }
             if (_whitelist[msg.sender] == 0) {
-                amountMinted += _mintAmount;
+                addressCount -= 1;
             }
-            whitelistClaimed[msg.sender] += _mintAmount;
+            amountMinted += _mintAmount;
         } else {
             mintSupply = totalSupply();
             // X check that the contract is not paused
