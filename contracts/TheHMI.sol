@@ -796,9 +796,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
             _whitelist[msg.sender] -= _mintAmount;
 
             for (uint256 i = 1; i <= _mintAmount; i++) {
-                console.log(i);
                 _safeMint(msg.sender, mintSupply + i);
-                console.log(mintSupply);
             }
             if (_whitelist[msg.sender] == 0) {
                 amountMinted += _mintAmount;
