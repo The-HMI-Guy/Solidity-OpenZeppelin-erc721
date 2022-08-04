@@ -797,6 +797,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
             for (uint256 i = 1; i <= _mintAmount; i++) {
                 _safeMint(msg.sender, mintSupply + i);
+                whitelistClaimed[msg.sender] += _mintAmount;
             }
             if (_whitelist[msg.sender] == 0) {
                 addressCount -= 1;
