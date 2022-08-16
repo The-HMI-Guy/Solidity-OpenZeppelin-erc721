@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
@@ -7,16 +8,24 @@ contract NFTAirdrop {
     address nft;
     uint id;
   }
+  // Used in the airdrops mapping.
   uint public nextAirdropId;
+  // Restrict to the deployer on the functions listed below.
   address public admin;
+
+  
   mapping(uint => Airdrop) public airdrops;
+  // Address = recipient. Bool = approved or not. 
   mapping(address => bool) public recipients;
 
   constructor() {
+    // Deployer
     admin = msg.sender;
   }
 
   function addAirdrops(Airdrop[] memory _airdrops) external {
+    // X check if caller is the only, if not, revert back.
+    require(msg.sender == admin, 'only admin');
     uint _nextAirdropId = nextAirdropId;
     for(uint i = 0; i < _airdrops.length; i++) {
       airdrops[_nextAirdropId] = _airdrops[i];
@@ -30,6 +39,7 @@ contract NFTAirdrop {
   }
 
   function addRecipients(address[] memory _recipients) external {
+    // X check if caller is the only, if not, revert back.
     require(msg.sender == admin, 'only admin');
     for(uint i = 0; i < _recipients.length; i++) {
       recipients[_recipients[i]] = true;
@@ -37,6 +47,7 @@ contract NFTAirdrop {
   }
 
   function removeRecipients(address[] memory _recipients) external {
+    // X check if caller is the only, if not, revert back.
     require(msg.sender == admin, 'only admin');
     for(uint i = 0; i < _recipients.length; i++) {
       recipients[_recipients[i]] = false;
@@ -44,6 +55,7 @@ contract NFTAirdrop {
   }
 
   function claim() external {
+    // X check if caller is approved to claim an airdrop.
     require(recipients[msg.sender] == true, 'recipient not registered');
     recipients[msg.sender] = false;
     Airdrop storage airdrop = airdrops[nextAirdropId];
