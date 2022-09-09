@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 
@@ -17,7 +17,7 @@ contract NFTAirdrop {
   mapping(uint => Airdrop) public airdrops;
   // Address = recipient. Bool = approved or not. 
   mapping(address => bool) public recipients;
-
+721
   constructor() {
     // Deployer
     admin = msg.sender;
