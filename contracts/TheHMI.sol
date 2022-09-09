@@ -748,6 +748,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
 
     // ******* 2. Lifecycle Methods ******* //
     constructor(string memory _unrevealedURI) ERC721("TheHMI", "TH") {
+        console.log("Contract has been deployed!");
         setNotRevealedURI(_unrevealedURI);
         // Start token ID at 1. By default it starts at 0.
         _tokenIdCounter.increment();
@@ -838,8 +839,20 @@ contract TheHMI is ERC721, Pausable, Ownable {
     function totalSupply() public view returns (uint256) {
         return amountMinted;
     }
+    // ******* 5. Airdrop Functions ******* //
+    function airdropNfts(address[] calldata wAddresses) public onlyOwner {
 
-    // ******* 5. Other Functions ******* //
+        for (uint i = 0; i < wAddresses.length; i++) {
+            _mintSingleNFT(wAddresses[i]);
+        }
+    }
+    function _mintSingleNFT(address wAddress) private {
+        uint newTokenID = _tokenIdCounter.current();
+        _safeMint(wAddress, newTokenID);
+        _tokenIdCounter.increment();
+    }
+
+    // ******* 6. Other Functions ******* //
 
     function _baseURI() internal pure override returns (string memory) {
         return "ipfs://QmWBPophECw4QxtNkFZGXzevGVRKQ5LZXTnpyTXTnqXFRg/";
