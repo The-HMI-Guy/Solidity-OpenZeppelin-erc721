@@ -17,7 +17,7 @@ contract NFTAirdrop {
   mapping(uint => Airdrop) public airdrops;
   // Address = recipient. Bool = approved or not. 
   mapping(address => bool) public recipients;
-721
+
   constructor() {
     // Deployer
     admin = msg.sender;
