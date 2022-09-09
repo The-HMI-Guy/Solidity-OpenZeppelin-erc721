@@ -11,7 +11,7 @@ async function main() {
     "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc",
   ];
 
-  const factory = await hre.ethers.getContractFactory("NFTAirdrop");
+  const factory = await hre.ethers.getContractFactory("TheHMI");
   const [owner] = await hre.ethers.getSigners();
   const contract = await factory.deploy();
 
