@@ -840,16 +840,19 @@ contract TheHMI is ERC721, Pausable, Ownable {
         return amountMinted;
     }
     // ******* 5. Airdrop Functions ******* //
-    function airdropNfts(address[] calldata wAddresses) public onlyOwner {
+    /// @dev Pass in an array of addresses that will mint a single NFT (airdrop)
+    function airdrop(address[] calldata AirDropAddresses) public onlyOwner {
 
-        for (uint i = 0; i < wAddresses.length; i++) {
-            _mintSingleNFT(wAddresses[i]);
+        for (uint i = 0; i < AirDropAddresses.length; i++) {
+            _mintSingleNFT(AirDropAddresses[i]);
         }
     }
     function _mintSingleNFT(address wAddress) private {
-        uint newTokenID = _tokenIdCounter.current();
+        // Increment token ID to prevent minting an exisiting token
+        uint newTokenID = totalSupply() + 1;
+
         _safeMint(wAddress, newTokenID);
-        _tokenIdCounter.increment();
+        amountMinted ++;
     }
 
     // ******* 6. Other Functions ******* //
