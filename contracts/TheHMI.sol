@@ -12,6 +12,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
+
 import "hardhat/console.sol";
 
 /**
@@ -727,7 +728,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
     /// @dev Main variables for the NFT collection
     string public notRevealedURI;
     
-    uint256 public maxSupply = 100;
+    uint256 public maxSupply = 5;
     uint256 public maxMintAmount = 5;
     uint256 public mintPrice = 1.5 ether;
     uint256 public amountMinted;
@@ -778,6 +779,8 @@ contract TheHMI is ERC721, Pausable, Ownable {
         if (_whitelist[msg.sender] > 0) {
             // X check that the whitelist is enabled
             require(whitelistEnabled, "Whitelist not enabled");
+            // X check that totalSupply is less than MAX_SUPPLY
+            require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
             // X check that mint amount is less than the account's purchase amount
             require(
                 _mintAmount <= _whitelist[msg.sender],
@@ -840,19 +843,29 @@ contract TheHMI is ERC721, Pausable, Ownable {
         return amountMinted;
     }
     // ******* 5. Airdrop Functions ******* //
-    /// @dev Pass in an array of addresses that will mint a single NFT (airdrop)
-    function airdrop(address[] calldata AirDropAddresses) public onlyOwner {
+    function airdropNfts(address[] calldata wAddresses) public onlyOwner {
 
-        for (uint i = 0; i < AirDropAddresses.length; i++) {
-            _mintSingleNFT(AirDropAddresses[i]);
+        for (uint i = 0; i < wAddresses.length; i++) {
+            _mintSingleNFT(wAddresses[i]);
         }
     }
     function _mintSingleNFT(address wAddress) private {
-        // Increment token ID to prevent minting an exisiting token
-        uint newTokenID = totalSupply() + 1;
-
+        uint256 mintSupply = totalSupply();
+        console.log("MintSupply:", mintSupply);
+        console.log("TokenCounter.Current:", _tokenIdCounter.current());
+        require(_tokenIdCounter.current() < maxSupply, "Mint greater than the remaining supply");
+                    // X check that totalSupply is less than MAX_SUPPLY
+            require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
+            // X check if the mint amount + mint supply is greater than the max supply
+            require(
+                1 + mintSupply <= maxSupply,
+                "Mint amount greater than the remaining supply"
+            );
+        uint newTokenID = _tokenIdCounter.current();
+        console.log("newTokenID:", newTokenID);
         _safeMint(wAddress, newTokenID);
-        amountMinted ++;
+        _tokenIdCounter.increment();
+        console.log("TokenCounter.Current:", _tokenIdCounter.current());
     }
 
     // ******* 6. Other Functions ******* //
@@ -881,5 +894,6 @@ contract TheHMI is ERC721, Pausable, Ownable {
 }
 
 /* NOTES:
-    Issues: None
+    Issues: Need to test require statements, get mintSupply in Airdrop to increment, then test all three stages owner mints -> WL mint -> airdrop
+    ["0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db",  "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2"]
 */
