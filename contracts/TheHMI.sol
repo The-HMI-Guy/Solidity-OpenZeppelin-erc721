@@ -861,12 +861,10 @@ contract TheHMI is ERC721, Pausable, Ownable {
                 1 + mintSupply <= maxSupply,
                 "Mint amount greater than the remaining supply"
             );
-        uint newTokenID = _tokenIdCounter.current();
-        console.log("newTokenID:", newTokenID);
-        _safeMint(wAddress, newTokenID);
-        _tokenIdCounter.increment();
+        console.log("mintSupply:", mintSupply);
+        _safeMint(wAddress, mintSupply + 1);
         amountMinted++;
-        console.log("TokenCounter.Current:", _tokenIdCounter.current());
+        console.log("Amount Minted:", amountMinted);
     }
 
     // ******* 6. Other Functions ******* //
@@ -895,6 +893,6 @@ contract TheHMI is ERC721, Pausable, Ownable {
 }
 
 /* NOTES:
-    Issues: Need to test require statements, get mintSupply in Airdrop to increment, then test all three stages owner mints -> WL mint -> airdrop
+    Issues: Need to test require statements, then test all three stages owner mints -> WL mint -> airdrop
     ["0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db",  "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2"]
 */
