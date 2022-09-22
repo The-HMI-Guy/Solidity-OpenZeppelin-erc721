@@ -865,6 +865,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
         console.log("newTokenID:", newTokenID);
         _safeMint(wAddress, newTokenID);
         _tokenIdCounter.increment();
+        amountMinted++;
         console.log("TokenCounter.Current:", _tokenIdCounter.current());
     }
 
