@@ -851,20 +851,14 @@ contract TheHMI is ERC721, Pausable, Ownable {
     }
     function _mintSingleNFT(address wAddress) private {
         uint256 mintSupply = totalSupply();
-        console.log("MintSupply:", mintSupply);
-        console.log("TokenCounter.Current:", _tokenIdCounter.current());
-        require(_tokenIdCounter.current() < maxSupply, "Mint greater than the remaining supply");
-                    // X check that totalSupply is less than MAX_SUPPLY
-            require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
-            // X check if the mint amount + mint supply is greater than the max supply
-            require(
-                1 + mintSupply <= maxSupply,
-                "Mint amount greater than the remaining supply"
-            );
-        console.log("mintSupply:", mintSupply);
+
+        // X check that totalSupply is less than MAX_SUPPLY
+        require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
+        // X check if the mint amount + mint supply is greater than the max supply
+        require(mintSupply + 1 <= maxSupply,"Mint amount greater than the remaining supply");
+
         _safeMint(wAddress, mintSupply + 1);
         amountMinted++;
-        console.log("Amount Minted:", amountMinted);
     }
 
     // ******* 6. Other Functions ******* //
@@ -893,6 +887,5 @@ contract TheHMI is ERC721, Pausable, Ownable {
 }
 
 /* NOTES:
-    Issues: Need to test require statements, then test all three stages owner mints -> WL mint -> airdrop
-    ["0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db",  "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2"]
+    Airdrop test: ["0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db",  "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2"]
 */
