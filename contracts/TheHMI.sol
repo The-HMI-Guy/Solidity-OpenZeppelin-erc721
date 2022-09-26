@@ -733,9 +733,6 @@ contract TheHMI is ERC721, Pausable, Ownable {
     uint256 public mintPrice = 1.5 ether;
     uint256 public amountMinted;
 
-   /// @dev Main variables for the NFT collection
-    uint256 public airdropTotal = 0;
-
     /// @dev Whitelist variables for the NFT collection
     uint256 public whitelistPrice = 1 ether;
     uint256 public whitelistMintAmount = 2;
@@ -747,8 +744,11 @@ contract TheHMI is ERC721, Pausable, Ownable {
     /// @dev Whitelist address mapping and count
     mapping(address => uint256) private _whitelist;
     uint256 public addressCount;
-
     mapping(address => uint256) public whitelistClaimed;
+
+    /// @dev Airdrop address mapping and count
+    mapping(address => uint256) public airdropClaimed;
+    uint256 public airdropTotal = 0;
 
     // ******* 2. Lifecycle Methods ******* //
     constructor(string memory _unrevealedURI) ERC721("TheHMI", "TH") {
@@ -859,9 +859,12 @@ contract TheHMI is ERC721, Pausable, Ownable {
         require(totalSupply() < maxSupply, "Can't mint anymore tokens.");
         // X check if the mint amount + mint supply is greater than the max supply
         require(mintSupply + 1 <= maxSupply,"Mint amount greater than the remaining supply");
+        // X check that account has not minted the max whitelist amount
+        require(airdropClaimed[wAddress] < 1,"This account has already been airdropped" );
 
         _safeMint(wAddress, mintSupply + 1);
         airdropTotal++;
+        airdropClaimed[wAddress] ++;
         amountMinted++;
     }
 
@@ -891,5 +894,5 @@ contract TheHMI is ERC721, Pausable, Ownable {
 }
 
 /* NOTES:
-    Airdrop test: ["0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db",  "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2"]
+    Airdrop test: ["0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db", "0x617F2E2fD72FD9D5503197092aC168c91465E7f2"]
 */
