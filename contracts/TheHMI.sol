@@ -733,6 +733,9 @@ contract TheHMI is ERC721, Pausable, Ownable {
     uint256 public mintPrice = 1.5 ether;
     uint256 public amountMinted;
 
+   /// @dev Main variables for the NFT collection
+    uint256 public airdropTotal = 0;
+
     /// @dev Whitelist variables for the NFT collection
     uint256 public whitelistPrice = 1 ether;
     uint256 public whitelistMintAmount = 2;
@@ -858,6 +861,7 @@ contract TheHMI is ERC721, Pausable, Ownable {
         require(mintSupply + 1 <= maxSupply,"Mint amount greater than the remaining supply");
 
         _safeMint(wAddress, mintSupply + 1);
+        airdropTotal++;
         amountMinted++;
     }
 
